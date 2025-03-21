@@ -7,58 +7,74 @@ import datetime
 
 API_TOKEN = config("API_TOKEN")
 
+def english_num_to_persian_num(n: str):
+    table = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
+    return n.translate(table)
+
+def get_shamsi_date():
+    return jdatetime.datetime.now().strftime("%Y/%m/%d")
+    
+def get_shamsi_month():
+    month =  jdatetime.datetime.now().strftime("%B")
+
+    mapping = {
+        'Farvardin': 'فروردین',
+        'Ordibehesht': 'اردیبهشت',
+        'Khordad': 'خرداد',
+        'Tir': 'تیر',
+        'Mordad': 'مرداد',
+        'Shahrivar': 'شهریور',
+        'Mehr': 'مهر',
+        'Aban': 'ابان',
+        'Azar': 'اذر',
+        'Dey': 'دی',
+        'Bahman': 'بهمن',
+        'Esfand': 'اسفند'
+    }
+
+    return mapping.get(month)
+
+def get_hamoumi_month():
+    
+    mapping = {
+        'Farvardin': 'خیر',
+        'Ordibehesht': 'صداقت',
+        'Khordad': 'دوستی',
+        'Tir': 'برکت',
+        'Mordad': 'ذهنیت',
+        'Shahrivar': 'تق',
+        'Mehr': 'توقف',
+        'Aban': 'صمیمیت',
+        'Azar': 'مرام و معرفت',
+        'Dey': 'اتاق',
+        'Bahman': 'شفاعت',
+        'Esfand': 'ویسکی'
+    }
+
+    return mapping.get(jdatetime.datetime.now().strftime("%B"))
+
 async def start(update:Update , context:ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(
-        chat_id= update.effective_chat.id,
-        text= "به بات تاریخ دان حموم خوش آمدید",
+    await update.effective_message.reply_text(
+        "به بات تاریخ دان حمام خوش امدید"
     )
 
-shamsi_date = jdatetime.datetime.now().strftime("%Y/%m/%d")
-shamsi_month = jdatetime.datetime.now().strftime("%B")
-
-async def shamsi_datetime(update: Update , context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text=(f"تاریخ شمسی امروز: {shamsi_date} , ماه : {shamsi_month}"),   
+async def shamsi_month(update: Update , context: ContextTypes.DEFAULT_TYPE):
+    await update.effective_message.reply_text(
+        f"این ماه {get_shamsi_month()} است"
     )
 
-jalali_date = jdatetime.datetime.now()
-gregorian_date = jalali_date.togregorian()
-new_gregorian_date = gregorian_date - datetime.timedelta(days=17)
-new_jalali_date = str(jdatetime.date.fromgregorian(date=new_gregorian_date))
-
-hamoum_month = []
-
-if(shamsi_month == 'Farvardin'):
-    hamoum_month.append('Kheir')
-if(shamsi_month == 'Ordibehesht'):
-    hamoum_month.append('seda ghat')
-if(shamsi_month == 'Khordad'):
-    hamoum_month.append('Dousti')
-if(shamsi_month == 'Tir'):
-    hamoum_month.append('Barekat')
-if(shamsi_month == 'Mordad'):
-    hamoum_month.append('Zehniat')
-if(shamsi_month == 'Shahrivar'):
-    hamoum_month.append('Tagh')
-if(shamsi_month == 'Mehr'):
-    hamoum_month.append('Tavaghof')
-if(shamsi_month == 'Aban'):
-    hamoum_month.append('Samimiat')
-if(shamsi_month == 'Azar'):
-    hamoum_month.append('Maram o Marefat')
-if(shamsi_month == 'Dey'):
-    hamoum_month.append('Otagh')
-if(shamsi_month == 'Bahman'):
-    hamoum_month.append('Shafaat')
-if(shamsi_month == 'Esfand'):
-    hamoum_month.append('Viski')
-
-async def hamoum_datetime(update: Update , context: ContextTypes.DEFAULT_TYPE):
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text=(f" {new_jalali_date} تاریخ حمومی امروز :ماه {hamoum_month} "),   
+async def shamsi_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.effective_message.reply_text(
+        f"{english_num_to_persian_num(get_shamsi_date())}"
     )
+
+async def hamoum_month(update: Update , context: ContextTypes.DEFAULT_TYPE):
+    await update.effective_message.reply_text(
+        f"این ماه {get_hamoumi_month()} است"
+    )
+
+async def hamoum_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    ...
 
 def main():
     print("bot is running")
@@ -68,8 +84,10 @@ def main():
 
     app.add_handlers([
         CommandHandler("start", start),
-        CommandHandler("shamsidate", shamsi_datetime),
-        CommandHandler("hamoumdate", hamoum_datetime),
+        CommandHandler("shamsi_month", shamsi_month),
+        CommandHandler("shamsi_date", shamsi_date),
+        CommandHandler("hamoum_month", hamoum_month),
+        CommandHandler("hamoum_date", hamoum_date),
     ])
 
     print("bot is polling")
