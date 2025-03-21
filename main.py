@@ -1,9 +1,7 @@
 from decouple import config
 from telegram import Update
-from telegram.ext import Application , CommandHandler , ContextTypes , ConversationHandler, filters, MessageHandler
-
+from telegram.ext import Application , CommandHandler , ContextTypes
 import jdatetime
-import datetime
 
 API_TOKEN = config("API_TOKEN")
 
