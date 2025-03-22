@@ -49,15 +49,15 @@ def get_hamoumi_month():
         'Esfand': 'ویسکی'
     }
 
-    # based on the explanations provided to me, hamoumi time is just shamsi time - 13 days, not caring about leap years as well, so lets implement that part
+    # based on the explanations provided to me, hamoumi time is just shamsi time - 17 days, not caring about leap years as well, so lets implement that part
 
     j_date = jdatetime.datetime.now()
 
-    h_date = j_date - jdatetime.timedelta(days=13)
+    h_date = j_date - jdatetime.timedelta(days=17)
 
-    j_month_minus_13 = h_date.strftime("%B")
+    j_month_minus_17 = h_date.strftime("%B")
 
-    return mapping.get(j_month_minus_13)
+    return mapping.get(j_month_minus_17)
 
 async def start(update:Update , context:ContextTypes.DEFAULT_TYPE):
     await update.effective_message.reply_text(
