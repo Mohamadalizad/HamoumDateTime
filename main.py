@@ -49,7 +49,15 @@ def get_hamoumi_month():
         'Esfand': 'ویسکی'
     }
 
-    return mapping.get(jdatetime.datetime.now().strftime("%B"))
+    # based on the explanations provided to me, hamoumi time is just shamsi time - 13 days, not caring about leap years as well, so lets implement that part
+
+    j_date = jdatetime.datetime.now()
+
+    h_date = j_date - jdatetime.timedelta(days=13)
+
+    j_month_minus_13 = h_date.strftime("%B")
+
+    return mapping.get(j_month_minus_13)
 
 async def start(update:Update , context:ContextTypes.DEFAULT_TYPE):
     await update.effective_message.reply_text(
@@ -66,12 +74,12 @@ async def shamsi_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"{english_num_to_persian_num(get_shamsi_date())}"
     )
 
-async def hamoum_month(update: Update , context: ContextTypes.DEFAULT_TYPE):
+async def hamoumi_month(update: Update , context: ContextTypes.DEFAULT_TYPE):
     await update.effective_message.reply_text(
         f"این ماه {get_hamoumi_month()} است"
     )
 
-async def hamoum_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def hamoumi_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ...
 
 def main():
@@ -84,8 +92,8 @@ def main():
         CommandHandler("start", start),
         CommandHandler("shamsi_month", shamsi_month),
         CommandHandler("shamsi_date", shamsi_date),
-        CommandHandler("hamoum_month", hamoum_month),
-        CommandHandler("hamoum_date", hamoum_date),
+        CommandHandler("hamoum_month", hamoumi_month),
+        CommandHandler("hamoum_date", hamoumi_date),
     ])
 
     print("bot is polling")
